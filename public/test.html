@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Битва на линиях</title>
+        <meta charset="utf-8"/>
+        <script src="http://chat.webtricks.pro:8084/socket.io/socket.io.js"></script>
+        <script src="/js/chat.js"></script>
+        <script>
+            var chat = null;
+
+            function init() {
+                chat = new Chat({userId: Math.round(Math.random() * 1000), userData: {}}, 'chat.webtricks.pro:8084');
+                chat.join('main');
+
+                chat.addEventListener('onmessage', function(data){
+                    document.getElementById('chat').innerHTML = data.message + '<br/>' + document.getElementById('chat').innerHTML;
+                })
+            }
+
+            function send() {
+                chat.message('main', document.getElementById('message').value);
+                document.getElementById('message').value = '';
+            }
+
+        </script>
+    </head>
+
+    <body onload="init()">
+        <div style="border: 1px solid black; width: 750px; height: 250px; overflow-y: scroll;" id="chat"></div>
+        <input id="message"/><button onclick="send()">Send</button>
+    </body>
+</html>
