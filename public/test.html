@@ -1,32 +1,61 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Демо чат</title>
-        <meta charset="utf-8"/>
-        <script src="http://chat.webtricks.pro:8084/socket.io/socket.io.js"></script>
-        <script src="/chat.js"></script>
-        <script>
-            var chat = null;
+<head>
+    <title>Демо чат</title>
+    <meta charset="utf-8"/>
+    <script src="http://localhost:8084/socket.io/socket.io.js"></script>
+    <script src="/chat.js"></script>
+    <script>
+        var chat = null;
 
-            function init() {
-                chat = new Chat({userId: Math.round(Math.random() * 1000), userData: {}}, 'chat.webtricks.pro:8084');
-                chat.join('main');
+        function init() {
+            chat = new Chat({userId: 222, userData: {name: "Вася пупкин"}}, 'localhost:8084');
+            chat.join('Сказка');
 
-                chat.addEventListener('onmessage', function(data){
-                    document.getElementById('chat').innerHTML = data.message + '<br/>' + document.getElementById('chat').innerHTML;
-                })
-            }
+            chat.addEventListener('onmessage', function(data){
+                document.getElementById('chat').innerHTML = '<strong>' + data.user.name + '</strong>: ' + data.message + '<br/>' + document.getElementById('chat').innerHTML;
+            });
 
-            function send() {
-                chat.message('main', document.getElementById('message').value);
-                document.getElementById('message').value = '';
-            }
+            chat.addEventListener('onsysmessage', function(data){
+                switch (data.type) {
+                    case 'user-join':
+                        document.getElementById('chat').innerHTML = '<span style="color:gray;"><em>' + data.user.name + '</em> вошел в чат</span><br/>' + document.getElementById('chat').innerHTML;
+                        break;
 
-        </script>
-    </head>
+                    case 'user-leave':
+                        document.getElementById('chat').innerHTML = '<span style="color:gray;"><em>' + data.user.name + '</em> покинул чат</span><br/>' + document.getElementById('chat').innerHTML;
+                        break;
+                    case 'user-list':
+                        var list = document.getElementById('user-list');
+                        list.innerHTML = '';
+                        for (var userIndex in data.users) {
+                            list.innerHTML += '<li>'+data.users[userIndex].name+'</li>';
+                        }
+                        break;
+                }
 
-    <body onload="init()">
-        <div style="border: 1px solid black; width: 750px; height: 250px; overflow-y: scroll;" id="chat"></div>
-        <input id="message"/><button onclick="send()">Send</button>
-    </body>
+            });
+
+            chat.getList('Сказка');
+        }
+
+        function send() {
+            chat.message('main', document.getElementById('message').value);
+            document.getElementById('message').value = '';
+        }
+
+    </script>
+</head>
+
+<body onload="init()">
+<div style="border: 1px solid black; width: 750px; height: 250px; overflow-y: scroll;float:left;" id="chat"></div>
+<div style="border: 1px solid black; width: 250px; height: 250px; overflow-y: scroll;float:left;">
+    <h5>Кто в чате:</h5>
+    <ul id="user-list">
+
+    </ul>
+</div>
+<br clear="both"/>
+<input id="message"/><button onclick="send()">Send</button>
+</body>
 </html>
