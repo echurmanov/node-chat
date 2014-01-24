@@ -1,3 +1,4 @@
 module.exports = {
-    port: @http-port@
+    port: @http-port@,
+    host: @http-host@
 };
