@@ -11,7 +11,7 @@ TheTaleChat.prototype = {
         kango.browser.tabs.getCurrent(function(tab) {
             // tab is KangoBrowserTab object
             if (tab.getUrl().indexOf("http://the-tale.org/game") == 0) {
-                tab.dispatchMessage('addTaleChat', kango.io.getResourceUrl('res/tale-widgets-reinit.js'));
+                tab.dispatchMessage('addTaleChat', 'init');
             } else {
                 tab.dispatchMessage('errorMessage', 'Данный функционал доступен только на странице http://the-tale.org/game');
             }
