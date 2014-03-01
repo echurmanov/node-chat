@@ -55,22 +55,23 @@ function TaleChatInit() {
         chat = new Chat({userId: userName, userData: {name: userName}}, 'chat.webtricks.pro:8084');
         chat.join('Tale');
         chat.addEventListener('onmessage', function(data){
-            document.getElementById('chat').innerHTML = '<strong>' + data.user.name + '</strong>: ' + data.message + '<br/>' +                   document.getElementById('chat').innerHTML;
+            document.getElementById('chat').innerHTML = '<strong>' + data.user.name + '</strong>: ' + data.message + '<br/>' + document.getElementById('chat').innerHTML;
         });
         chat.addEventListener('onsysmessage', function(data){
+            var cnt = document.getElementById('chat');
             switch (data.type) {
                 case 'user-join':
-                    $('#chat').html('<span style="color:gray;"><em>' + data.user.name + '</em> вошел в чат</span><br/>' + $('#c                  hat').html());
+                    cnt.innerHTML = ('<span style="color:gray;"><em>' + data.user.name + '</em> вошел в чат</span><br/>' + cnt.innerHTML);
                     break;
                 case 'user-leave':
-                    $('#chat').html('<span style="color:gray;"><em>' + data.user.name + '</em> покинул чат</span><br/>' + $('#c                  hat').html());
+                    cnt.innerHTML = ('<span style="color:gray;"><em>' + data.user.name + '</em> покинул чат</span><br/>' + cnt.innerHTML);
                     break;
                 case 'user-list':
                     var innerHTML = '';
                     for (var userIndex in data.users) {
                         innerHTML += '<li>'+data.users[userIndex].name+'</li>';
                     }
-                    $('#user-list').html(innerHTML);
+                    document.getElementById('user-list').innerHTML = innerHTML;
                     break;
             }
         });
