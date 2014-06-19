@@ -4,13 +4,15 @@
     <title>Демо чат</title>
     <meta charset="utf-8"/>
     <script src="http://localhost:8084/socket.io/socket.io.js"></script>
-    <script src="/chat.js"></script>
+    <script src="chat.js"></script>
     <script>
         var chat = null;
-
+        var chatName = '';
         function init() {
-            chat = new Chat({userId: 222, userData: {name: "Вася пупкин"}}, 'localhost:8084');
-            chat.join('Tale');
+            var yourName = prompt("Enter your name");
+            chatName = prompt("Enter chat name to join", "Test-Chat");
+            chat = new Chat({userId: yourName, userData: {name: yourName}}, 'localhost:8084');
+            chat.join(chatName);
 
             chat.addEventListener('onmessage', function(data){
                 document.getElementById('chat').innerHTML = '<strong>' + data.user.name + '</strong>: ' + data.message + '<br/>' + document.getElementById('chat').innerHTML;
@@ -19,11 +21,11 @@
             chat.addEventListener('onsysmessage', function(data){
                 switch (data.type) {
                     case 'user-join':
-                        document.getElementById('chat').innerHTML = '<span style="color:gray;"><em>' + data.user.name + '</em> вошел в чат</span><br/>' + document.getElementById('chat').innerHTML;
+                        document.getElementById('chat').innerHTML = '<span style="color:gray;"><em>' + data.user.name + '</em> join to chat</span><br/>' + document.getElementById('chat').innerHTML;
                         break;
 
                     case 'user-leave':
-                        document.getElementById('chat').innerHTML = '<span style="color:gray;"><em>' + data.user.name + '</em> покинул чат</span><br/>' + document.getElementById('chat').innerHTML;
+                        document.getElementById('chat').innerHTML = '<span style="color:gray;"><em>' + data.user.name + '</em> leave chat</span><br/>' + document.getElementById('chat').innerHTML;
                         break;
                     case 'user-list':
                         var list = document.getElementById('user-list');
@@ -36,11 +38,11 @@
 
             });
 
-            chat.getList('Tale');
+            chat.getList(chatName);
         }
 
         function send() {
-            chat.message('Tale', document.getElementById('message').value);
+            chat.message(chatName, document.getElementById('message').value);
             document.getElementById('message').value = '';
         }
 
@@ -50,12 +52,12 @@
 <body onload="init()">
 <div style="border: 1px solid black; width: 750px; height: 250px; overflow-y: scroll;float:left;" id="chat"></div>
 <div style="border: 1px solid black; width: 250px; height: 250px; overflow-y: scroll;float:left;">
-    <h5>Кто в чате:</h5>
+    <h5>Users:</h5>
     <ul id="user-list">
 
     </ul>
 </div>
 <br clear="both"/>
-<input id="message"/><button onclick="send()">Send</button>
+<input id="message" onkeypress="if (event.charCode == 13) send();"/><button onclick="send()">Send</button>
 </body>
 </html>
